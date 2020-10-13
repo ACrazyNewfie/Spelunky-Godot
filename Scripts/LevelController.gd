@@ -307,45 +307,15 @@ func generate_room(current_room, current_layer, current_level, type):
 			elif tile_type == "x":
 				find_node("Tiles").set_cell(x, y, SAC_ALTAR_LEFT)
 				find_node("Tiles").set_cell(x + 1, y, SAC_ALTAR_RIGHT)
-				var body = Sprite.new()
-				body.texture = load("res://Sprites/KaliBody.png")
-				body.position = Vector2(x * 16 + 16, y * 16 - 16)
-				add_child(body)
-				var head = Sprite.new()
-				var atlas = AtlasTexture.new()
-				atlas.atlas = load("res://Sprites/KaliHeads.png")
-				atlas.region = Rect2(0, 0, 32, 32)
-				head.texture = atlas
-				head.position = Vector2(x * 16 + 16, y * 16 - 64)
-				add_child(head)
+				var statue = load("res://Scenes/KaliStatue.tscn").instance()
+				statue.position = Vector2(x * 16, y * 16)
+				add_child(statue)
 			#elif tile_type == "I":
 			#	instance_create(xpos+16, ypos+12, oGoldIdol)
 			elif tile_type == "B":
-				var body = Sprite.new()
-				body.texture = load("res://Sprites/TikiBody.png")
-				body.position = Vector2(x * 16 + 16, y * 16 + 64)
-				add_child(body)
-				var head = Sprite.new()
-				var atlas = AtlasTexture.new()
-				atlas.atlas = load("res://Sprites/KaliHeads.png")
-				atlas.region = Rect2(0, 0, 32, 32)
-				head.texture = atlas
-				head.position = Vector2(x * 16 + 16, y * 16 + 16)
-				add_child(head)
-				var left_arm = Sprite.new()
-				atlas = AtlasTexture.new()
-				atlas.atlas = load("res://Sprites/TikiArms.png")
-				atlas.region = Rect2(randi() % 3 * 16, 0, 16, 16)
-				left_arm.texture = atlas
-				left_arm.position = Vector2(x * 16 + 40, y * 16 + 40)
-				add_child(left_arm)
-				var right_arm = Sprite.new()
-				atlas = AtlasTexture.new()
-				atlas.atlas = load("res://Sprites/TikiArms.png")
-				atlas.region = Rect2(randi() % 3 * 16, 16, 16, 16)
-				right_arm.texture = atlas
-				right_arm.position = Vector2(x * 16 - 8, y * 16 + 40)
-				add_child(right_arm)
+				var statue = load("res://Scenes/TikiStatue.tscn").instance()
+				statue.position = Vector2(x * 16, y * 16)
+				add_child(statue)
 			#elif tile_type == "Q":
 			#	if shop_type == "Craps": tile_type_add(bgDiceSign, 0, 0, 48, 32, xpos, ypos, 9004)
 			#elif tile_type == "q":
