@@ -19,24 +19,7 @@ var has_shop = false
 func generate_border():
 	for x in range(42):
 		for y in range(34):
-			if x == 0 or x == 41 or y == 0 or y == 33: find_node("Tiles").set_cell(x, y, 0)
-
-const EMPTY = -1
-const BRICK = 0
-const BLOCK = 1
-const LADDER = 2
-const LADDER_TOP = 3
-const SPIKES = 4
-const ALTAR_LEFT = 5
-const ALTAR_RIGHT = 6
-const SAC_ALTAR_LEFT = 7
-const SAC_ALTAR_RIGHT = 8
-const ENTRANCE = 9
-const EXIT = 10
-const BRICK_DOWN = 11
-const BRICK2 = 12
-const BRICK_GOLD = 13
-const BRICK_GOLD_BIG = 14
+			if x == 0 or x == 41 or y == 0 or y == 33: globals.set_tile(x, y, "Brick")
 
 const HORIZONTAL_PATH_ENTRANCE = 0
 const HORIZONTAL_PATH_DROP_ENTRANCE = 1
@@ -211,7 +194,6 @@ var obstacle_templates = {
 func generate_room(current_room, current_layer, current_level, type):
 	var room = room_templates[type][randi() % room_templates[type].size()]
 	var obstacle = "000000000000000"
-	var shop_type = ""
 
 	if type == RANDOM_ROOM:
 		if current_level > 0 and not has_altar and randi() % 16 == 0:
@@ -230,31 +212,31 @@ func generate_room(current_room, current_layer, current_level, type):
 	elif type == SHOP_LEFT:
 		room = room_templates[8][0]
 		match randi() % 7:
-			0: shop_type = "General"
-			1: shop_type = "Bomb"
-			2: shop_type = "Weapon"
-			3: shop_type = "Rare"
-			4: shop_type = "Clothing"
+			0: globals.shop_type = "General"
+			1: globals.shop_type = "Bomb"
+			2: globals.shop_type = "Weapon"
+			3: globals.shop_type = "Rare"
+			4: globals.shop_type = "Clothing"
 			5:
-				shop_type = "Craps"
+				globals.shop_type = "Craps"
 				room = room_templates[8][1]
 			6:
-				shop_type = "Kissing"
+				globals.shop_type = "Kissing"
 				room = room_templates[8][2]
 				has_damsel = true
 	elif type == SHOP_RIGHT:
 		room = room_templates[9][0]
 		match randi() % 7:
-			0: shop_type = "General"
-			1: shop_type = "Bomb"
-			2: shop_type = "Weapon"
-			3: shop_type = "Rare"
-			4: shop_type = "Clothing"
+			0: globals.shop_type = "General"
+			1: globals.shop_type = "Bomb"
+			2: globals.shop_type = "Weapon"
+			3: globals.shop_type = "Rare"
+			4: globals.shop_type = "Clothing"
 			5:
-				shop_type = "Craps"
+				globals.shop_type = "Craps"
 				room = room_templates[9][1]
 			6:
-				shop_type = "Kissing"
+				globals.shop_type = "Kissing"
 				room = room_templates[9][2]
 				has_damsel = true
 
@@ -282,31 +264,31 @@ func generate_room(current_room, current_layer, current_level, type):
 			var y = j + current_layer * 8 + 1
 			
 			if tile_type == "1":
-				if randi() % 10 == 0: find_node("Tiles").set_cell(x, y, BLOCK)
-				else: find_node("Tiles").set_cell(x, y, BRICK)
+				if randi() % 10 == 0: globals.set_tile(x, y, "Block")
+				else: globals.set_tile(x, y, "Brick")
 			elif tile_type == "2" and randi() % 2 == 0:
-				if randi() % 10 == 0: find_node("Tiles").set_cell(x, y, BLOCK)
-				else: find_node("Tiles").set_cell(x, y, BRICK)
-			elif tile_type == "L": find_node("Tiles").set_cell(x, y, LADDER)
-			elif tile_type == "P": find_node("Tiles").set_cell(x, y, LADDER_TOP)
-			elif tile_type == "7" and randi() % 3 == 0: find_node("Tiles").set_cell(x, y, SPIKES)
-			#elif tile_type == "4" and randi() % 4 == 0: instance_create(xpos, ypos, oPushBlock)
+				if randi() % 10 == 0: globals.set_tile(x, y, "Block")
+				else: globals.set_tile(x, y, "Brick")
+			elif tile_type == "L": globals.set_tile(x, y, "Ladder")
+			elif tile_type == "P": globals.set_tile(x, y, "LadderTop")
+			elif tile_type == "7" and randi() % 3 == 0: globals.set_tile(x, y, "Spikes")
+			elif tile_type == "4" and randi() % 4 == 0: globals.set_tile(x, y, "Block") #instance_create(xpos, ypos, oPushBlock)
 			elif tile_type == "9":
-				find_node("Tiles").set_cell(x, y + 1, BRICK) # block = find_node("Tiles").set_cell(x, y + 1, BRICK)
+				var below = globals.set_tile(x, y + 1, "Brick")
 				if type == 0 or type == 1:
-					find_node("Tiles").set_cell(x, y, ENTRANCE)
+					globals.set_tile(x, y, "Entrance")
 					find_node("Player").position = Vector2(x * 16 + 8, y * 16 + 8)
 					globals.entrance_pos = Vector2(x, y)
 				else:
-					find_node("Tiles").set_cell(x, y, EXIT)
+					globals.set_tile(x, y, "Exit")
 					globals.exit_pos = Vector2(x, y)
-			#		block.invincible = true
+					below.invincible = true
 			elif tile_type == "A":
-				find_node("Tiles").set_cell(x, y, ALTAR_LEFT)
-				find_node("Tiles").set_cell(x + 1, y, ALTAR_RIGHT)
+				globals.set_tile(x, y, "IdolAltar")
+				globals.set_tile(x + 1, y, "IdolAltar")
 			elif tile_type == "x":
-				find_node("Tiles").set_cell(x, y, SAC_ALTAR_LEFT)
-				find_node("Tiles").set_cell(x + 1, y, SAC_ALTAR_RIGHT)
+				globals.set_tile(x, y, "SacAltar")
+				globals.set_tile(x + 1, y, "SacAltar")
 				var statue = load("res://Scenes/KaliStatue.tscn").instance()
 				statue.position = Vector2(x * 16, y * 16)
 				add_child(statue)
@@ -316,43 +298,49 @@ func generate_room(current_room, current_layer, current_level, type):
 				var statue = load("res://Scenes/TikiStatue.tscn").instance()
 				statue.position = Vector2(x * 16, y * 16)
 				add_child(statue)
-			#elif tile_type == "Q":
-			#	if shop_type == "Craps": tile_type_add(bgDiceSign, 0, 0, 48, 32, xpos, ypos, 9004)
+			elif tile_type == "Q" and globals.shop_type == "Craps":
+				var dice_sign = Sprite.new()
+				dice_sign.texture = load("res://Sprites/DiceSign.png")
+				dice_sign.centered = false
+				dice_sign.position = Vector2(x * 16, y * 16)
+				add_child(dice_sign)
 			#elif tile_type == "q":
 			#	n = randi() % 6 + 1
 			#	scrGenerateItem(xpos+8, ypos+8, 1)
 			#	obj.inDiceHouse = true
-			#elif tile_type == "+":
-			#	obj = instance_create(xpos, ypos, oSolid)
-			#	obj.sprite_index = sIceBlock
-			#	obj.shopWall = true
-			#elif tile_type == "W":
-			#	if global.murderer or global.thiefLevel > 0:
-			#		if global.isDamsel: tile_type_add(bgWanted, 32, 0, 32, 32, xpos, ypos, 9004)
-			#		elif global.isTunnelMan: tile_type_add(bgWanted, 64, 0, 32, 32, xpos, ypos, 9004)
-			#		else: tile_type_add(bgWanted, 0, 0, 32, 32, xpos, ypos, 9004)
-			#elif tile_type == "." and not collision_point(xpos, ypos, oSolid, 0, 0):
-			#	if randi() % 10 == 0: obj = instance_create(xpos, ypos, oBlock)
-			#	else: obj = instance_create(xpos, ypos, oBrick)
-			#	obj.shopWall = true
-			#elif tile_type == "b":
-			#	obj = instance_create(xpos, ypos, oBrickSmooth)
-			#	obj.shopWall = true
+			elif tile_type == "+": # This is poorly handled. When ice blocks are implemented, replace it
+				var tile = globals.set_tile(x, y, "Block")
+				var ice = AtlasTexture.new()
+				ice.atlas = load("res://Sprites/Caves.png")
+				ice.region = Rect2(Vector2(432, 0), Vector2(16, 16))
+				tile.get_node("Sprite").texture = ice
+				tile.shop_wall = true
+			elif tile_type == "W" and globals.wanted > 0:
+				var wanted_texture = AtlasTexture.new()
+				wanted_texture.atlas = load("res://Sprites/Wanted.png")
+				wanted_texture.region = Rect2(Vector2(globals.character_index * 16, 0), Vector2(32, 32))
+				var wanted_sign = Sprite.new()
+				wanted_sign.centered = false
+				wanted_sign.position = Vector2(x * 16, y * 16)
+				wanted_sign.texture = wanted_texture
+				add_child(wanted_sign)
+			elif tile_type == ".": # and not collision_point(xpos, ypos, oSolid, 0, 0):
+				var wall
+				if randi() % 10 == 0: wall = globals.set_tile(x, y, "Block")
+				else: wall = globals.set_tile(x, y, "Brick")
+				wall.shop_wall = true
+			elif tile_type == "b":
+				var shop_floor = globals.set_tile(x, y, "ShopFloor")
+				shop_floor.shop_wall = true
 			#elif tile_type == "l":
 			#	if has_damsel: instance_create(xpos, ypos, oLampRed)
 			#	else: instance_create(xpos, ypos, oLamp)
 			#elif tile_type == "K":
 			#	obj = instance_create(xpos, ypos, oShopkeeper)
-			#	obj.style = shop_type
-			#elif tile_type == "k":
-			#	obj = instance_create(xpos, ypos, oSign)
-			#	if shop_type == "General": obj.sprite_index = sSignGeneral
-			#	elif shop_type == "Bomb": obj.sprite_index = sSignBomb
-			#	elif shop_type == "Weapon": obj.sprite_index = sSignWeapon
-			#	elif shop_type == "Clothing": obj.sprite_index = sSignClothing
-			#	elif shop_type == "Rare": obj.sprite_index = sSignRare
-			#	elif shop_type == "Craps": obj.sprite_index = sSignCraps
-			#	elif shop_type == "Kissing": obj.sprite_index = sSignKissing
+			#	obj.style = globals.shop_type
+			elif tile_type == "k":
+				var shop_sign = globals.set_tile(x, y, "Sign")
+				#shop_sign.set_type(globals.shop_type)
 			#elif tile_type == "i": scrShopItemsGen()
 			#elif tile_type == "d": instance_create(xpos+8, ypos+8, oDice)
 			#elif tile_type == "D":
@@ -361,11 +349,11 @@ func generate_room(current_room, current_layer, current_level, type):
 			#	obj.status = 5
 			elif tile_type == "s":
 				if randi() % 10 == 0: pass #instance_create(xpos, ypos, oSnake)
-				elif randi() % 2 == 0: find_node("Tiles").set_cell(x, y, BRICK)
+				elif randi() % 2 == 0: globals.set_tile(x, y, "Brick")
 			#elif tile_type == "S": instance_create(xpos, ypos, oSnake)
 			#elif tile_type == "T": instance_create(xpos+8, ypos+8, oRubyBig)
-			#elif tile_type == "M":
-			#	instance_create(xpos, ypos, oBrick)
+			elif tile_type == "M":
+				globals.set_tile(x, y, "Brick")
 			#	obj = instance_create(xpos+8, ypos+8, oMattock)
 			#	obj.cost = 0
 			#	obj.forSale = false
@@ -398,37 +386,53 @@ func generate_level():
 		if current_layer == 4:
 			finished = true
 			last_room = current_room
-			rooms[current_room][old_layer] = 2
-			if (rooms[current_room][old_layer - 1] > 4 and rooms[current_room][old_layer - 1] < 8) or rooms[current_room][old_layer - 1] == 13:
-				rooms[current_room][old_layer] = 3
+			rooms[current_room][old_layer] = HORIZONTAL_PATH_EXIT
+			if (rooms[current_room][old_layer - 1] > 4 and rooms[current_room][old_layer - 1] < 8) or rooms[current_room][old_layer - 1] == DROP:
+				rooms[current_room][old_layer] = HORIZONTAL_PATH_DROP_EXIT
 		elif current_layer != old_layer:
-			rooms[current_room][current_layer] = 7
-			if rooms[current_room][old_layer] == 0: rooms[current_room][old_layer] = 1
-			if rooms[current_room][old_layer] == 5: rooms[current_room][old_layer] = 6
-			if rooms[current_room][old_layer] == 7: rooms[current_room][old_layer] = 13
-		elif rooms[current_room][current_layer] == 4:
-			rooms[current_room][current_layer] = 5
+			rooms[current_room][current_layer] = HORIZONTAL_PATH_OPEN_CEILING
+			if rooms[current_room][old_layer] == HORIZONTAL_PATH_ENTRANCE: rooms[current_room][old_layer] = HORIZONTAL_PATH_DROP_ENTRANCE
+			if rooms[current_room][old_layer] == HORIZONTAL_PATH: rooms[current_room][old_layer] = HORIZONTAL_PATH_DROP
+			if rooms[current_room][old_layer] == HORIZONTAL_PATH_OPEN_CEILING: rooms[current_room][old_layer] = DROP
+		elif rooms[current_room][current_layer] == RANDOM_ROOM:
+			rooms[current_room][current_layer] = HORIZONTAL_PATH
+	
+	if randi() % globals.current_level <= 1 and globals.current_level > 0 and not globals.black_market_generated:
+		var i = 0
+		var poss = [
+			[0, 0, 0, 0],
+			[0, 0, 0, 0],
+			[0, 0, 0, 0],
+			[0, 0, 0, 0]
+		]
+		for j in range(4):
+			for k in range(4):
+				if j < 3:
+					if rooms[j + 1][k] < 8 and rooms[j + 1][k] > 4:
+						poss[j][k] = SHOP_LEFT
+						i += 1
+				elif j > 0:
+					if rooms[j - 1][k] < 8 and rooms[j - 1][k] > 4:
+						poss[j][k] = SHOP_RIGHT
+						i += 1
+		
+		if i > 0:
+			var n = randi() % i
+			for j in range(4):
+				for k in range(4):
+					if poss[j][k] != 0:
+						if n == 0: rooms[j][k] = poss[j][k]
+						n -= 1
 
 	for layer in range(4):
 		for room in range(4):
 			generate_room(room, layer, globals.current_level, rooms[room][layer])
 
-	for x in range(1, 41):
-		for y in range(0, 33):
-			if find_node("Tiles").get_cell(x, y) == BRICK:
-				if find_node("Tiles").get_cell(x, y + 1) != BRICK: find_node("Tiles").set_cell(x, y, BRICK_DOWN)
-				elif y > 0:
-					if randi() % 10 == 0: find_node("Tiles").set_cell(x, y, BRICK2)
-					var n = randi() % 100
-					if n < 19: find_node("Tiles").set_cell(x, y, BRICK_GOLD)
-					elif n < 29: find_node("Tiles").set_cell(x, y, BRICK_GOLD_BIG)
-					#elif x > 0 and x < room_width-16 and y > 1 and y < room_height - 16:
-					#	if randi() % 100 == 0: instance_create(x+8, y+8, oSapphireBig)
-					#	elif randi() % 120 == 0: instance_create(x+8, y+8, oEmeraldBig)
-					#	elif randi() % 140 == 0: instance_create(x+8, y+8, oRubyBig)
-					#	elif randi() % 1200 == 0: scrGenerateItem(x+8, y+8, 2)
-			if find_node("Tiles").get_cell(x, y) == SPIKES and find_node("Tiles").get_cell(x, y + 1) == EMPTY: find_node("Tiles").set_cell(x, y, EMPTY) # temporary fix
-
+	#for x in range(42):
+		#for y in range(34):
+			#if globals.get_tile_type(x, y) == "Spikes" and globals.get_tile_type(x, y + 1) == "": globals.set_tile(x, y, "") # temporary fix
+			
 func _ready():
 	randomize()
+	globals.reset_tiles(42, 34)
 	generate_level()
